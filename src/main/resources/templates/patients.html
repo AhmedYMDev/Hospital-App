@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{template}">
+<head>
+    <title>Patients</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="mb-0">
+                    <i class="bi bi-people"></i>
+                    Liste des patients
+                </h4>
+                <small class="text-muted" th:text="${totalItems} + ' patient(s) trouve(s)'"></small>
+            </div>
+            <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')"
+               th:href="@{/admin/formPatient(page=${currentPage}, keyword=${keyword}, size=${size})}">
+                <i class="bi bi-plus-circle"></i>
+                Nouveau
+            </a>
+        </div>
+
+        <div class="card-body">
+            <form method="get" th:action="@{/user/index}" class="row g-2 mb-3">
+                <input type="hidden" name="size" th:value="${size}">
+                <div class="col-md-10">
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                           placeholder="Chercher par nom">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i>
+                        Chercher
+                    </button>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Date de naissance</th>
+                        <th>Malade</th>
+                        <th>Score</th>
+                        <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(listPatients)}">
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Aucun patient trouve.
+                        </td>
+                    </tr>
+                    <tr th:each="p : ${listPatients}">
+                        <td th:text="${p.id}"></td>
+                        <td th:text="${p.nom}"></td>
+                        <td th:text="${#dates.format(p.dateNaissance, 'yyyy-MM-dd')}"></td>
+                        <td>
+                            <span th:if="${p.malade}" class="badge text-bg-danger">Oui</span>
+                            <span th:unless="${p.malade}" class="badge text-bg-success">Non</span>
+                        </td>
+                        <td th:text="${p.score}"></td>
+                        <td sec:authorize="hasRole('ADMIN')">
+                            <a class="btn btn-sm btn-outline-warning me-1"
+                               th:href="@{/admin/editPatient(id=${p.id}, page=${currentPage}, keyword=${keyword}, size=${size})}">
+                                <i class="bi bi-pencil-square"></i>
+                                Editer
+                            </a>
+                            <a class="btn btn-sm btn-outline-danger"
+                               th:href="@{/admin/deletePatient(id=${p.id}, page=${currentPage}, keyword=${keyword}, size=${size})}"
+                               onclick="return confirm('Voulez-vous vraiment supprimer ce patient ?')">
+                                <i class="bi bi-trash"></i>
+                                Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav th:if="${totalPages > 0}" aria-label="Pagination patients">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:each="page, status : ${pages}"
+                        th:classappend="${status.index == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:text="${status.index + 1}"
+                           th:href="@{/user/index(page=${status.index}, size=${size}, keyword=${keyword})}"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+</body>
+</html>

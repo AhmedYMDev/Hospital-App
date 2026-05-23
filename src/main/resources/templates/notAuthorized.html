@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template}">
+<head>
+    <title>Acces refuse</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="alert alert-danger shadow-sm">
+        <h4 class="alert-heading">
+            <i class="bi bi-exclamation-triangle"></i>
+            Acces refuse
+        </h4>
+        <p class="mb-0">Vous n'avez pas les droits necessaires pour acceder a cette ressource.</p>
+    </div>
+    <a class="btn btn-secondary" th:href="@{/user/index}">
+        <i class="bi bi-arrow-left"></i>
+        Retour a la liste des patients
+    </a>
+</section>
+</body>
+</html>
